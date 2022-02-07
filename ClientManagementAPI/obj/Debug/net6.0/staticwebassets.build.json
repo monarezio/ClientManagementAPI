@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "kfG2EhTw+lqHHr84mLPhv1+Hc925pyk5qrxazI+KnM4=",
+  "Source": "ClientManagementAPI",
+  "BasePath": "_content/ClientManagementAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
