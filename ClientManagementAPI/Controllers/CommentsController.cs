@@ -6,21 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClientManagementAPI.Controllers;
 
 [ApiController]
-[Route("Clients/{id:guid}/[controller]")]
+[Route("{studentId}/Clients/{id:guid}/[controller]")]
 public class CommentsController: ControllerBase
 {
     [HttpGet]
-    public ActionResult<List<CommentEntity>> Get(Guid id)
+    public ActionResult<List<CommentEntity>> Get(Guid id, string studentId)
     {
-        ClientEntity c = ClientsRepository.Clients.Find(i => i.Id == id);
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+        
+        ClientEntity c = ClientsRepository.Clients[studentId].Find(i => i.Id == id);
         if (c == null) return NotFound();
         return c.Comments;
     }
 
     [HttpPost]
-    public ActionResult<CommentEntity> Add(Guid id, CommentModel model)
+    public ActionResult<CommentEntity> Add(Guid id, CommentModel model, string studentId)
     {
-        ClientEntity c = ClientsRepository.Clients.Find(i => i.Id == id);
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+        
+        ClientEntity c = ClientsRepository.Clients[studentId].Find(i => i.Id == id);
         if (c == null) return NotFound();
         CommentEntity e = new CommentEntity
         {

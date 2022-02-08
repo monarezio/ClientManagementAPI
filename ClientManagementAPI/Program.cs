@@ -1,3 +1,30 @@
+using ClientManagementAPI.Entities;
+using ClientManagementAPI.Repository;
+
+string[] users = File.ReadAllLines("users.csv");
+foreach (var user in users)
+{
+    var item = user.Split(";");
+    var mockedData = new List<ClientEntity>();
+    mockedData.Add(new ClientEntity
+    {
+        Id = Guid.NewGuid(),
+        Comments = new List<CommentEntity>(),
+        Email = "martin.novy@gmail.com",
+        FirstName = "Martin",
+        LastName = "Nový"
+    });
+    mockedData.Add(new ClientEntity
+    {
+        Id = Guid.NewGuid(),
+        Comments = new List<CommentEntity>(),
+        Email = "karel.stary@gmail.com",
+        FirstName = "Karel",
+        LastName = "Starý"
+    });
+    ClientsRepository.Clients.Add(item[1], mockedData);
+}
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.

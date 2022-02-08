@@ -4,5 +4,5 @@ namespace ClientManagementAPI.Repository;
 
 public class ClientsRepository
 {
-    public static List<ClientEntity> Clients = new List<ClientEntity>();
+    public static Dictionary<string, List<ClientEntity>> Clients = new Dictionary<string, List<ClientEntity>>();
 }

@@ -6,13 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClientManagementAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("{studentId}/[controller]")]
 public class ClientsController : ControllerBase
 {
     [HttpGet]
-    public ActionResult<List<ClientEntity>> Get()
+    public ActionResult<List<ClientEntity>> Get(string studentId)
     {
-        return Ok(ClientsRepository.Clients.Take(100).Select(c => new ClientEntity
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+        
+        return Ok(ClientsRepository.Clients[studentId].Select(c => new ClientEntity
         {
             FirstName = c.FirstName,
             LastName = c.LastName,
@@ -23,8 +25,10 @@ public class ClientsController : ControllerBase
     }
 
     [HttpPost]
-    public IActionResult Add(ClientCreationModel creationModel)
+    public IActionResult Add(ClientCreationModel creationModel, string studentId)
     {
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+        
         ClientEntity c = new ClientEntity
         {
             Id = Guid.NewGuid(),
@@ -32,25 +36,29 @@ public class ClientsController : ControllerBase
             FirstName = creationModel.FirstName,
             LastName = creationModel.LastName
         };
-        ClientsRepository.Clients.Add(c);
+        ClientsRepository.Clients[studentId].Add(c);
         return Ok(c);
     }
 
     [HttpDelete]
     [Route("{id:guid}")]
-    public IActionResult Destroy(Guid id)
+    public IActionResult Destroy(Guid id, string studentId)
     {
-        ClientEntity c = ClientsRepository.Clients.Find(c => c.Id == id);
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+
+        ClientEntity c = ClientsRepository.Clients[studentId].Find(i => i.Id == id);
         if (c == null) return NotFound();
-        ClientsRepository.Clients.Remove(c);
+        ClientsRepository.Clients[studentId].Remove(c);
         return NoContent();
     }
 
     [HttpGet]
     [Route("{id:guid}")]
-    public ActionResult<ClientEntity> GetDetail(Guid id)
+    public ActionResult<ClientEntity> GetDetail(Guid id, string studentId)
     {
-        ClientEntity c = ClientsRepository.Clients.Find(c => c.Id == id);
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+        
+        ClientEntity c = ClientsRepository.Clients[studentId].Find(c => c.Id == id);
         if (c == null) return NotFound();
         return Ok(new ClientEntity
         {
@@ -64,9 +72,11 @@ public class ClientsController : ControllerBase
 
     [HttpPut]
     [Route("{id:guid}")]
-    public IActionResult Update(Guid id, ClientCreationModel creationModel)
+    public IActionResult Update(Guid id, ClientCreationModel creationModel, string studentId)
     {
-        ClientEntity c = ClientsRepository.Clients.Find(c => c.Id == id);
+        if (!ClientsRepository.Clients.ContainsKey(studentId)) return NotFound();
+
+        ClientEntity c = ClientsRepository.Clients[studentId].Find(c => c.Id == id);
         if (c == null) return NotFound();
 
         c.Email = creationModel.Email;
